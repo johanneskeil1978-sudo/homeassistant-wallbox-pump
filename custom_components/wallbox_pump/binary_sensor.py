@@ -1,26 +1,32 @@
+
 from __future__ import annotations
 
 from homeassistant.components.binary_sensor import BinarySensorEntity, BinarySensorDeviceClass
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
+from homeassistant.helpers.entity import DeviceInfo
 
 from .const import DOMAIN
 
 async def async_setup_entry(hass, entry, async_add_entities):
     coordinator = hass.data[DOMAIN][entry.entry_id]
-    async_add_entities([WallboxChargingBinarySensor(coordinator)])
+    async_add_entities([WallboxChargingBinarySensor(coordinator, coordinator.device_id)])
+
+def _device_info(device_id: str) -> DeviceInfo:
+    return DeviceInfo(
+        identifiers={(DOMAIN, device_id)},
+        manufacturer="PUMP",
+        model="Generic Wallbox",
+        name="Wallbox",
+    )
 
 class WallboxChargingBinarySensor(CoordinatorEntity, BinarySensorEntity):
     _attr_name = "Charging"
     _attr_device_class = BinarySensorDeviceClass.POWER
-    def __init__(self, coordinator):
+    def __init__(self, coordinator, device_id: str):
         super().__init__(coordinator)
         self._attr_has_entity_name = True
-        self._attr_device_info = {
-            "identifiers": {(DOMAIN, coordinator.device_id)},
-            "manufacturer": "PUMP",
-            "model": "Generic Wallbox",
-            "name": "Wallbox",
-        }
+        self._attr_device_info = _device_info(device_id)
+        self._attr_unique_id = f"{DOMAIN}_{device_id}_charging"
     @property
     def is_on(self):
         status = self.coordinator.data.get("session_status")

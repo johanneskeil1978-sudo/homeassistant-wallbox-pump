@@ -4,8 +4,7 @@ Zeigt deine Wallbox (über PUMP Connect) als **Gerät** in Home Assistant an –
 
 ## Features
 - Polling-only (kein Webhook/öffentlicher Zugriff nötig)
-- Entities: Status, Power (W), Energy (kWh), Session Duration (s), Active Session ID, Charging (binary)
-- Buttons: Start / Stop
+- Entities: Status, Power (W), Energy (kWh), Session Duration (s), Active Session ID, Charging (binary) + Buttons Start/Stop
 - Konfiguration via UI (API-Key & Device-ID)
 - HACS-kompatibel (als Custom Repository)
 
@@ -14,11 +13,6 @@ Zeigt deine Wallbox (über PUMP Connect) als **Gerät** in Home Assistant an –
 2. Integration installieren und Home Assistant neu starten.
 3. In HA: *Einstellungen → Geräte & Dienste → Integration hinzufügen* → **Wallbox (PUMP Connect)** wählen.
 4. **API-Key** (x-api-key) und **Device-ID** aus dem PUMP-Portal eintragen.
-
-## Hinweise
-- Standard-Polling: 120 s (einstellbar im Code; OptionsFlow folgt).
-- Energie/Session-Dauer werden aus der aktiven Session ermittelt (Feldnamen variieren je nach PUMP; Integration nutzt mehrere Fallbacks).
-- Für sofortige Statuswechsel ggf. PUMP-App verwenden (Polling-Design).
 
 ## Debug-Logs
 In `configuration.yaml`:
