@@ -1,0 +1,17 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Wallbox (PUMP Connect)",
+        "description": "Enter your PUMP API credentials",
+        "data": {
+          "api_key": "API Key",
+          "device_id": "Device ID"
+        }
+      }
+    },
+    "abort": {},
+    "error": {}
+  },
+  "title": "Wallbox (PUMP Connect)"
+}

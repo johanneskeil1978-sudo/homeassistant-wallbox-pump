@@ -1,0 +1,7 @@
+{
+  "name": "Wallbox (PUMP Connect)",
+  "domains": [
+    "wallbox_pump"
+  ],
+  "country": "DE"
+}
