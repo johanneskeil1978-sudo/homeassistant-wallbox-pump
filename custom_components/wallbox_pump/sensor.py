@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from homeassistant.components.sensor import SensorEntity, SensorDeviceClass, SensorStateClass
-from homeassistant.const import POWER_WATT, ENERGY_KILO_WATT_HOUR, TIME_SECONDS
+from homeassistant.const import UnitOfPower, UnitOfEnergy, UnitOfTime
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
 from .const import DOMAIN
@@ -38,7 +38,7 @@ class WallboxStatusSensor(BasePumpSensor):
 class WallboxPowerSensor(BasePumpSensor):
     _attr_name = "Power"
     _attr_device_class = SensorDeviceClass.POWER
-    _attr_native_unit_of_measurement = POWER_WATT
+    _attr_native_unit_of_measurement = UnitOfPower.WATT
     _attr_state_class = SensorStateClass.MEASUREMENT
     @property
     def native_value(self):
@@ -47,7 +47,7 @@ class WallboxPowerSensor(BasePumpSensor):
 class WallboxEnergySensor(BasePumpSensor):
     _attr_name = "Energy"
     _attr_device_class = SensorDeviceClass.ENERGY
-    _attr_native_unit_of_measurement = ENERGY_KILO_WATT_HOUR
+    _attr_native_unit_of_measurement = UnitOfEnergy.KILO_WATT_HOUR
     _attr_state_class = SensorStateClass.TOTAL_INCREASING
     @property
     def native_value(self):
@@ -55,7 +55,7 @@ class WallboxEnergySensor(BasePumpSensor):
 
 class WallboxSessionDurationSensor(BasePumpSensor):
     _attr_name = "Session Duration"
-    _attr_native_unit_of_measurement = TIME_SECONDS
+    _attr_native_unit_of_measurement = UnitOfTime.SECONDS
     _attr_state_class = SensorStateClass.MEASUREMENT
     @property
     def native_value(self):
