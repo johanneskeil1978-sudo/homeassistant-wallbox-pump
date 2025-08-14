@@ -33,7 +33,8 @@ class PumpCoordinator(DataUpdateCoordinator[Dict[str, Any]]):
     def __init__(self, hass: HomeAssistant, api_key: str, device_id: str) -> None:
         super().__init__(
             hass,
-            logger=hass.helpers.logger.logging.getLogger(DOMAIN),
+            import logging
+            logger=logging.getLogger(__name__),
             name="Wallbox (PUMP)",
             update_interval=timedelta(seconds=DEFAULT_SCAN_INTERVAL),
         )
