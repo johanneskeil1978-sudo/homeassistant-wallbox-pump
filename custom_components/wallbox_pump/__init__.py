@@ -1,9 +1,8 @@
-
 from __future__ import annotations
 
 from homeassistant.core import HomeAssistant
 from homeassistant.config_entries import ConfigEntry
-from homeassistant.helpers.device_registry import async_get as async_get_device_registry
+from homeassistant.helpers import device_registry as dr
 
 from .const import DOMAIN
 from .coordinator import PumpCoordinator
@@ -24,8 +23,8 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     hass.data[DOMAIN][entry.entry_id] = coordinator
 
     # Device Registry entry so it shows up as a device
-    dr = async_get_device_registry(hass)
-    dr.async_get_or_create(
+    devreg = dr.async_get(hass)
+    devreg.async_get_or_create(
         config_entry_id=entry.entry_id,
         identifiers={(DOMAIN, device_id)},
         manufacturer="PUMP",

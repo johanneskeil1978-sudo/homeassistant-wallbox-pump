@@ -1,19 +1,21 @@
-
 from __future__ import annotations
 
+import logging
 from datetime import timedelta
-from typing import Any, Dict, Optional
+from typing import Any, Dict
 
 import aiohttp
-from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
 from homeassistant.core import HomeAssistant
+from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
 
 from .const import API_BASE, DEFAULT_SCAN_INTERVAL, DOMAIN
 
+_LOGGER = logging.getLogger(__name__)
+
 def _pick(d: dict, keys: list, default=None):
+    """Try multiple key names or nested paths and return the first hit."""
     for k in keys:
         if isinstance(k, (list, tuple)):
-            # nested lookup path, e.g., ["metrics", "energy_kwh"]
             cur = d
             ok = True
             for part in k:
@@ -25,7 +27,7 @@ def _pick(d: dict, keys: list, default=None):
             if ok:
                 return cur
         else:
-            if k in d:
+            if isinstance(d, dict) and k in d:
                 return d[k]
     return default
 
@@ -33,8 +35,7 @@ class PumpCoordinator(DataUpdateCoordinator[Dict[str, Any]]):
     def __init__(self, hass: HomeAssistant, api_key: str, device_id: str) -> None:
         super().__init__(
             hass,
-            import logging
-            logger=logging.getLogger(__name__),
+            _LOGGER,
             name="Wallbox (PUMP)",
             update_interval=timedelta(seconds=DEFAULT_SCAN_INTERVAL),
         )
@@ -50,22 +51,19 @@ class PumpCoordinator(DataUpdateCoordinator[Dict[str, Any]]):
                     devices = await r1.json()
 
                 async with session.get(f"{API_BASE}/sessions?status=ACTIVE") as r2:
-                    # may be 200 with {"sessions":[...]} or empty object
                     r2.raise_for_status()
                     sessions = await r2.json()
-
         except Exception as err:  # noqa: BLE001
             raise UpdateFailed(err) from err
 
         device = next((d for d in devices if d.get("id") == self.device_id), None)
 
         active_session = None
-        if isinstance(sessions, dict) and "sessions" in sessions and isinstance(sessions["sessions"], list):
+        if isinstance(sessions, dict) and isinstance(sessions.get("sessions"), list):
             active_session = next((s for s in sessions["sessions"] if s.get("device_id") == self.device_id), None)
 
-        # Normalize some fields for convenience
         power_w = 0
-        if device and device.get("connectors"):
+        if device and device.get("connectors") and isinstance(device["connectors"], list) and device["connectors"]:
             power_w = device["connectors"][0].get("current_power") or 0
 
         energy_kwh = 0.0
@@ -75,12 +73,9 @@ class PumpCoordinator(DataUpdateCoordinator[Dict[str, Any]]):
         if active_session:
             session_id = active_session.get("id")
             session_status = active_session.get("status")
-            # Try multiple common key names to be robust
-            energy_kwh = _pick(active_session, ["energy_kwh", "energy", "charged_energy_kwh", ["metrics","energy_kwh"]], 0.0) or 0.0
-            # duration could be seconds, ms, or iso string; prefer seconds
-            duration_seconds = _pick(active_session, ["duration_seconds", "duration", "elapsed_seconds", ["metrics","duration_seconds"]], 0) or 0
-            # if duration looks like milliseconds
-            if isinstance(duration_seconds, (int, float)) and duration_seconds > 1e6:
+            energy_kwh = _pick(active_session, ["energy_kwh", "energy", "charged_energy_kwh", ["metrics", "energy_kwh"]], 0.0) or 0.0
+            duration_seconds = _pick(active_session, ["duration_seconds", "duration", "elapsed_seconds", ["metrics", "duration_seconds"]], 0) or 0
+            if isinstance(duration_seconds, (int, float)) and duration_seconds > 1_000_000:
                 duration_seconds = int(duration_seconds / 1000)
 
         return {
