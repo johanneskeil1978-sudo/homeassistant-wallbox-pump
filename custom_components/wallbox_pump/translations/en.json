@@ -10,8 +10,15 @@
         }
       }
     },
-    "abort": {},
-    "error": {}
-  },
-  "title": "Wallbox (PUMP Connect)"
+    "options": {
+      "step": {
+        "basic": {
+          "title": "Polling Options",
+          "data": {
+            "scan_interval": "Polling interval (seconds)"
+          }
+        }
+      }
+    }
+  }
 }

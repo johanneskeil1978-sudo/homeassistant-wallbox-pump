@@ -14,7 +14,6 @@ from .const import API_BASE, DEFAULT_SCAN_INTERVAL, DOMAIN
 _LOGGER = logging.getLogger(__name__)
 
 def _pick(d: dict, keys: list, default=None):
-    """Try multiple key names or nested paths and return the first hit."""
     for k in keys:
         if isinstance(k, (list, tuple)):
             cur = d
@@ -54,7 +53,7 @@ class PumpCoordinator(DataUpdateCoordinator[Dict[str, Any]]):
                 async with session.get(f"{API_BASE}/sessions?status=ACTIVE") as r2:
                     r2.raise_for_status()
                     sessions = await r2.json()
-        except Exception as err:  # noqa: BLE001
+        except Exception as err:
             raise UpdateFailed(err) from err
 
         device = next((d for d in devices if d.get("id") == self.device_id), None)
