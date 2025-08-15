@@ -1,7 +1,7 @@
 {
   "domain": "wallbox_pump",
   "name": "Wallbox (PUMP Connect)",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "logo": "logo.png",
   "documentation": "https://github.com/johanneskeil1978-sudo/homeassistant-wallbox-pump",
   "requirements": [],
