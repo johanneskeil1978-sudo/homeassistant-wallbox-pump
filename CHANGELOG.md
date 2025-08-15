@@ -1,5 +1,16 @@
 # 📦 Changelog
 
+
+## [0.1.5] - 2025-08-15
+### 🔹 Neu
+- **Polling konfigurierbar**: Neues Options-Menü in der Integration erlaubt die Einstellung des Abfrageintervalls (`scan_interval`) zwischen 15 s und 3600 s.
+- **Live-Übernahme** des Intervalls ohne Neustart der Integration.
+- **Standard**: 120 s.
+
+### 🔹 Technisches
+- Implementierung über `OptionsFlow`.
+- Automatisches Limitieren von zu kleinen/großen Werten.
+
 ## [0.1.4] - 2025-08-14
 ### 🔹 Neu
 - **Geräte-Zuordnung korrigiert**:  
